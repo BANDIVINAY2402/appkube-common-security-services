@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Build-Jdk-Spec: 17
+Implementation-Title: common-security-rbac-services
+Implementation-Version: 0.0.1-SNAPSHOT
+Build-Number: 
+Build-Time: 2024-05-22T04:31:38Z
+Created-By: Maven Integration for Eclipse
+
