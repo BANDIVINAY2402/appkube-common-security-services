@@ -1,0 +1,2475 @@
+openapi: 3.0.3
+info:
+  title: Common security rbac services
+  version: 1.0.0
+  description: API for managing organizations, policies, and emails
+servers:
+  - url: http://localhost:8080/api/v1
+tags:
+  - name: Organization
+    description: Operations related to organizations
+  - name: Policies
+    description: Operations related to policies
+  - name: Role
+    description: Operations related to Role  
+  - name: Config
+    description: Operations related to Config
+  - name: Permissions
+    description: Operations related to Permissions
+  - name: Permissioncategory
+    description: Operations related to PermissionCategory
+  - name: Security
+    description: Operations related to Security
+  - name: User
+    description: Operations related to User
+  - name: Email
+    description: Contains endpoints for handling email-related operations such as sending user and organization registration emails.
+
+paths:
+  /organization/profile-by-id/{id}:
+    get:
+      tags:
+        - Organization
+      summary: Retrieve organization profile by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '404':
+          description: Organization not found
+        '417':
+          description: Expectation failed
+
+  /organization/profile-by-name/{name}:
+    get:
+      tags:
+        - Organization
+      summary: Retrieve organization profile by name
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '404':
+          description: Organization not found
+        '417':
+          description: Expectation failed
+
+  /organization/getAllOrganizations:
+    get:
+      tags:
+        - Organization
+      summary: Retrieve all organizations
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        '404':
+          description: Organizations not found
+
+  /organization/id/{id}:
+    get:
+      tags:
+        - Organization
+      summary: Retrieve organization by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '404':
+          description: Organization not found
+
+  /organization/getOrganizationByUserName:
+    get:
+      tags:
+        - Organization
+      summary: Retrieve organization by user name
+      parameters:
+        - name: userName
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '404':
+          description: Organization not found
+
+  /organization/name/{organizationName}:
+    get:
+      tags:
+        - Organization
+      summary: Retrieve organization by name
+      parameters:
+        - name: organizationName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '404':
+          description: Organization not found
+
+  /organization/add:
+    post:
+      tags:
+        - Organization
+      summary: Add a new organization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+      parameters:
+        - name: pushToCmdb
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '417':
+          description: Expectation failed
+
+  /organization/push-to-cmdb/{organizationName}:
+    post:
+      tags:
+        - Organization
+      summary: Push organization to CMDB
+      parameters:
+        - name: organizationName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '404':
+          description: Organization not found
+
+  /policies:
+    get:
+      summary: Retrieve all policies
+      tags:
+        - Policies
+      responses:
+        '200':
+          description: A list of policies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Policy'
+    post:
+      summary: Create a new policy
+      tags:
+        - Policies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Policy'
+      responses:
+        '201':
+          description: The created policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Policy'
+
+  /policies/{id}:
+    get:
+      summary: Retrieve a specific policy by ID
+      tags:
+        - Policies
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the policy to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The requested policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Policy'
+    delete:
+      summary: Delete a policy by ID
+      tags:
+        - Policies
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the policy to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Policy deleted successfully
+
+  /policies/policy-assigned-permissions:
+    get:
+      summary: Retrieve all policy assigned permissions
+      tags:
+        - Policies
+      responses:
+        '200':
+          description: A list of policy assigned permissions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PolicyAssignedPermissions'
+    post:
+      summary: Create a new policy assigned permission
+      tags:
+        - Policies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyAssignedPermissions'
+      responses:
+        '201':
+          description: The created policy assigned permission
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyAssignedPermissions'
+
+  /email/send-new-user-registration-mail:
+    get:
+      tags:
+        - Email
+      summary: Sends a new user registration email.
+      description: |
+        This endpoint triggers the sending of a new user registration email. It is designed to be called periodically (e.g., every minute) to ensure that all eligible users receive their registration emails promptly.
+      operationId: sendNewUserRegistrationMail
+      responses:
+        '200':
+          description: The request was successful, and the user's registration email has been sent.
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /email/send-new-org-user-registration-mail:
+    get:
+      tags:
+        - Email
+      summary: Sends a new organization user registration email.
+      
+      operationId: sendNewOrgUserRegistrationMail
+      responses:
+        '200':
+          description: The request was successful, and the new organization user's registration email has been sent.
+          content:
+            text/plain:
+              schema:
+                type: string
+  
+  /config/byKey/{key}:
+    get:
+      tags:
+        - Config
+      summary: Find configuration by key
+      operationId: findConfigByKey
+      parameters:
+        - name: key
+          in: path
+          description: The key of the configuration to find
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '404':
+          description: Configuration not found
+        '500':
+          description: Internal server error
+ 
+
+  /config/find-by-key-org-id:
+    get:
+      tags:
+        - Config
+      summary: Find configuration by key and organization ID
+      operationId: findConfigByKeyAndOrgId
+      parameters:
+        - name: key
+          in: query
+          description: The key of the configuration to find
+          required: true
+          schema:
+            type: string
+        - name: organizationId
+          in: query
+          description: The ID of the organization
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '404':
+          description: Configuration not found
+         
+        '500':
+          description: Internal server error
+               
+  /config/find-by-org-id/{organizationId}:
+    get:
+      tags:
+        - Config
+      summary: Find configurations by organization ID
+      operationId: findConfigsByOrgId
+      parameters:
+        - name: organizationId
+          in: path
+          description: The ID of the organization
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Config'
+        '404':
+          description: No configurations found
+         
+        '500':
+          description: Internal server error
+          
+  /config/find-by-created-by/{createdBy}:
+    get:
+      tags:
+        - Config
+      summary: Find configurations by creator
+      operationId: findConfigsByCreatedBy
+      parameters:
+        - name: createdBy
+          in: path
+          description: The username of the creator
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Config'
+        '404':
+          description: No configurations found
+       
+        '500':
+          description: Internal server error
+      
+  /config/find-by-updated-by/{updatedBy}:
+    get:
+      tags:
+        - Config
+      summary: Find configurations by updater
+      operationId: findConfigsByUpdatedBy
+      parameters:
+        - name: updatedBy
+          in: path
+          description: The username of the updater
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Config'
+        '404':
+          description: No configurations found
+         
+        '500':
+          description: Internal server error
+  /config/find-by-status/{status}:
+    get:
+      tags:
+        - Config
+      summary: Find configurations by status
+      operationId: findConfigsByStatus
+      parameters:
+        - name: status
+          in: path
+          description: The status of the configurations
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Config'
+        '404':
+          description: No configurations found
+         
+        '500':
+          description: Internal server error
+          
+  /config/byId/{id}:
+    get:
+      tags:
+        - Config
+      summary: Find configuration by ID
+      operationId: findConfigById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the configuration to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '404':
+          description: Configuration not found
+        '500':
+          description: Internal server error  
+  /config/listAll:
+    get:
+      tags:
+        - Config
+      summary: Retrieve all configurations
+      operationId: findAllConfigs
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Config'
+        '500':
+          description: Internal server error
+  /config/createConfig:
+    post:
+      tags:
+        - Config
+      summary: Create a new configuration
+      operationId: createConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Config'
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '400':
+          description: Bad request
+          
+        '500':
+          description: Internal server error
+  /config/create-encrypted:
+    post:
+      tags:
+        - Config
+      summary: Create a new encrypted configuration
+      operationId: createEncryptedConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Config'
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '400':
+          description: Bad request
+          
+        '500':
+          description: Internal server error
+  /config/configuration/{id}:
+    delete:
+      tags:
+        - Config
+      summary: Delete a configuration by ID
+      operationId: deleteConfigById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the configuration to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Configuration not found
+        '500':
+          description: Internal server error
+  /Role/listAll:
+    get:
+      tags:
+        - Role
+      summary: Fetch list of roles
+      operationId: getRoles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+        '404':
+          description: "Service Not found"
+        '500':
+          description: "Internal Server Error"
+          
+  /Role/find-by-owner:
+    get:
+      tags:
+        - Role
+      summary: Find roles by owner and group
+      parameters:
+        - name: createdBy
+          in: query
+          description: The creator of the roles
+          required: true
+          schema:
+            type: string
+        - name: isGroup
+          in: query
+          description: Indicates whether the roles are group roles
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+        '417':
+          description: Expectation failed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  
+  /Role/create:
+    post:
+      tags:
+        - Role
+      summary: Create a new role
+      operationId: createRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      responses:
+        '201':
+          description: Role created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '417':
+          description: Expectation failed
+          content:
+            application/json:
+              schema:
+                type: string
+  /Role/{id}:
+    get:
+      tags:
+        - Role
+      summary: Find role by ID
+      operationId: findRoleById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the role to fetch
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '404':
+          description: Role not found
+        '417':
+          description: Expectation failed
+          content:
+            application/json:
+              schema:
+                type: string  
+  /Role/get-role-group-details:
+    get:
+      tags:
+        - Role
+      summary: Get details of a role group
+      operationId: getRoleGroupDetails
+      parameters:
+        - name: userName
+          in: query
+          description: The username
+          required: true
+          schema:
+            type: string
+        - name: roleId
+          in: query
+          description: The ID of the role
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '426':
+          description: Role not found
+        '427':
+          description: Provided role is not a role group
+        '428':
+          description: User not found
+          
+  /Role/delete/{id}:
+    delete:
+      tags:
+        - Role
+      summary: Delete role by ID
+      operationId: deleteRoleById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the role to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Role removed successfully
+        '404':
+          description: Role not found
+        '417':
+          description: Expectation failed
+          content:
+            application/json:
+              schema:
+                type: string
+  /Role/update:
+    put:
+      tags:
+        - Role
+      summary: Update a role
+      operationId: updateRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      responses:
+        '200':
+          description: Role updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Bad request
+         
+        '404':
+          description: Role not found
+        '417':
+          description: Expectation failed
+  /permissions/ListAll:
+    get:
+      summary: Retrieve all permissions
+      tags:
+        - Permissions
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Permission"
+  /permissions/create:
+    post:
+      summary: Create a new permission
+      tags:
+        - Permissions 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Permission"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Permission"
+  /permissions/{id}:
+    get:
+      summary: Retrieve a permission by ID
+      tags:
+        - Permissions
+      
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Permission"
+    delete:
+      summary: Delete a permission by ID
+      tags:
+        - Permissions
+       
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: No content
+  
+  /permissions/update:
+    post:
+      summary: Update a permission
+      tags:
+        - Permissions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Permission'
+      responses:
+        '200':
+          description: Successful operation. Returns the updated permission.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Permission'
+        '400':
+          description: Bad request. Permission not found or invalid request body.
+          
+        '417':
+          description: Expectation failed. An unexpected error occurred.
+         
+  
+  /permissions/delete:
+    delete:
+      summary: Delete a permission by ID
+      tags:
+        - Permissions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Permission'
+      responses:
+        '200':
+          description: Successful operation. Permission deleted successfully.
+        '412':
+          description: Precondition failed. Not a valid entity.
+          content:
+            text/plain:
+              schema:
+                type: string     
+  /permissions/createPermissionInBatch:
+    post:
+      tags:
+        - Permissions
+      summary: Create permissions in batch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+      responses:
+        '200':
+          description: Permissions created successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Permission'
+        '417':
+          description: Expectation failed
+          content:
+            application/json:
+              schema:
+                type: string
+     
+
+  /permissions/createPermissionsByFile:
+    post:
+      tags:
+        - Permissions
+      summary: Create permissions by file
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                inputFile:
+                  type: string
+                  format: binary
+                str:
+                  type: string
+      responses:
+        '200':
+          description: Permissions created successfully
+        '417':
+          description: Expectation failed
+          content:
+            application/json:
+              schema:
+                type: string
+  /permission-categories:
+    get:
+      tags:
+        - Permissioncategory
+      summary: Get all permission categories
+      responses:
+       '200':
+         description: OK
+         content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/PermissionCategory'
+                
+    post:
+      tags:
+        - Permissioncategory
+      summary: Create a new permission category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionCategory'
+      responses:
+        '200':
+          description: Successful.
+  /permission-categories/{id}:
+    get:
+      tags:
+        - Permissioncategory
+      summary: Get a permission category by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PermissionCategory"
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - Permissioncategory
+      summary: Update a permission category
+    
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PermissionCategory"
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - Permissioncategory
+      summary: Delete a permission category by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+         
+        '404':
+          description: Not Found
+  /security/login:
+    get:
+      tags:
+        - Security
+      summary: User login
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: rememberMe
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+        '417':
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /security/signup:
+    post:
+      tags:
+        - Security
+      summary: User signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: User signed up successfully
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /security/signin:
+    post:
+      tags:
+        - Security
+      summary: User signin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /security/authenticate:
+    post:
+      tags:
+        - Security
+      summary: Authenticate user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsernamePasswordToken'
+      responses:
+        '200':
+          description: Successful authentication
+        
+        '417':
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /security/authenticateUser:
+    get:
+      tags:
+        - Security
+      summary: Authenticate user by username
+      parameters:
+        - name: userName
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User authenticated
+       
+        '417':
+          description: Authentication failed
+        
+  /security/logout:
+    get:
+      tags:
+        - Security
+      summary: Logout user
+      parameters:
+        - name: userName
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful logout
+         
+
+  /security/importUser:
+    post:
+      tags:
+        - Security
+      summary: Import users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '201':
+          description: Users imported successfully
+          content:
+            application/json:
+              schema:
+                type: string
+        '417':
+          description: Import failed
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /security/authenticateSession:
+    post:
+      tags:
+        - Security
+      summary: Authenticate user session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+      responses:
+        '200':
+          description: Session authenticated
+         
+
+  /security/forgot-password:
+    get:
+      tags:
+        - Security
+      summary: Send forgot password email
+      parameters:
+        - name: userName
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Email sent successfully
+         
+        '417':
+          description: Email send failed
+   
+  /user/find-all:
+    get:
+      tags:
+        - User
+      summary: Find all users
+      description: Retrieve all users irrespective of organization.
+      responses:
+        '200':
+          description: Successfully retrieved all users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+                  
+  /user/find-by-owner:
+    get:
+      tags:
+        - User
+      summary: Find users by owner ID
+      description: Retrieve all users associated with a given owner ID.
+      parameters:
+        - name: ownerId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID of the owner to find users for
+      responses:
+        '200':
+          description: Successfully retrieved users for the given owner ID
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /user/create:
+    post:
+      tags:
+        - User
+      summary: Create a new user
+      description: Create a new user with the provided details
+      requestBody:
+        required: true
+        content:
+          application/json::
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                organization:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+                ownerId:
+                  type: integer
+                targetService:
+                  type: string
+                roleId:
+                  type: string
+                errorOnOrgFound:
+                  type: boolean
+                firstName:
+                  type: string
+                middleName:
+                  type: string
+                lastName:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+                orgProfileFile:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '418':
+          description: Organization already exists
+        
+        '421':
+          description: User name/Login id already exists
+        
+        '422':
+          description: Email already registered
+   
+  /user/new-org-user:
+    post:
+      tags:
+        - User
+      summary: Create a new user in an organization
+      description: Create a new user within the specified organization
+      parameters:
+        - name: organization
+          in: query
+          description: The name of the organization
+          required: true
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: The email of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: New organization user request saved
+        
+        '421':
+          description: User name/Login id already exists
+        
+        '425':
+          description: Organization not found
+         
+        '417':
+          description: Expectation failed - Email already exists
+          
+  /user/{id}:
+    get:
+      tags:
+        - User
+      summary: Get user by ID
+      description: Retrieve user details by providing the user ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+
+    delete:
+      tags:
+        - User
+      summary: Delete user by ID
+      description: Delete a user based on the provided user ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                type: string
+        '417':
+          description: Expectation failed
+         
+
+ 
+  /user/search:
+    get:
+      tags:
+        - User
+      summary: Search users
+      description: Search for users based on specified criteria
+      parameters:
+        - name: isExternalSecurityEnable
+          in: query
+          description: Flag indicating whether external security is enabled
+          required: false
+          schema:
+            type: boolean
+        - name: id
+          in: query
+          description: ID of the user to search for
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: username
+          in: query
+          description: Username of the user to search for
+          required: false
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: Email of the user to search for
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: Type of the user to search for
+          required: false
+          schema:
+            type: string
+        - name: organization
+          in: query
+          description: Name of the organization associated with the user
+          required: false
+          schema:
+            type: string
+        - name: active
+          in: query
+          description: Flag indicating whether the user is active
+          required: false
+          schema:
+            type: boolean
+        - name: ownerId
+          in: query
+          description: ID of the owner user
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved users matching the criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '417':
+          description: Expectation failed - An error occurred while processing the request
+  /user/updateOrganization:
+    put:
+      tags:
+        - User
+      summary: Update user's organization
+      description: Update the organization associated with a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                organizationName:
+                  type: string
+      responses:
+        '200':
+          description: User's organization updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '417':
+          description: Expectation failed - An error occurred while processing the request 
+  /user/updateAssignedRoleGroups:
+    put:
+      tags:
+        - User
+      summary: Update user's assigned role groups
+      description: Update the assigned role groups for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User's assigned role groups updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '417':
+          description: Expectation failed - An error occurred while processing the request 
+          
+  /user/updateUserRoles:
+    put:
+      tags:
+        - User
+      summary: Update user's roles
+      description: Update the roles assigned to a user
+      parameters:
+        - name: userName
+          in: query
+          description: The username of the user to update roles for
+          required: true
+          schema:
+            type: string
+        - name: roleId
+          in: query
+          description: Comma-separated list of role IDs to assign to the user
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User's roles updated successfully
+        '417':
+          description: Expectation failed - An error occurred while processing the request
+  /user/assingRoleGroupToUsers:
+    post:
+      tags:
+        - User
+      summary: Assign role group to users
+      description: Assign a role group to multiple users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roleId:
+                  type: integer
+                  description: ID of the role group to assign
+                userIds:
+                  type: string
+                  description: Comma-separated list of user IDs to assign the role group to
+      responses:
+        '200':
+          description: Users added to role group successfully
+        '417':
+          description: Expectation failed - An error occurred while processing the request.
+  /user/inviteUser:
+    post:
+      tags:
+        - User
+      summary: Create user invitation
+      description: Create a new user invitation with the provided details
+      parameters:
+        - name: username
+          in: query
+          description: Username of the inviter
+          required: true
+          schema:
+            type: string
+        - name: inviteeEmail
+          in: query
+          description: Email address of the invitee
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invitation link sent successfully
+        '417':
+          description: Expectation failed - An error occurred while processing the request  
+          
+  /user/acceptInvite:
+    post:
+      tags:
+        - User
+      summary: Accept User Invite
+      description: |
+        Accepts a user invitation and sends login credentials via email.
+      parameters:
+        - name: inviteCode
+          in: query
+          description: Invitation code received by the user.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User invite accepted successfully.
+        '400':
+          description: Bad request. Invite code missing or invalid.
+
+  /user/getTeam:
+    get:
+      tags:
+        - User
+      summary: Get Team Members
+      description: Retrieves a list of team members based on provided criteria.
+      parameters:
+        - name: organization
+          in: query
+          description: Name of the organization.
+          required: false
+          schema:
+            type: string
+        - name: userName
+          in: query
+          description: Username of the user.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Team members retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: SUCCESS
+                  message:
+                    type: string
+                    description: Description of the result.
+                    example: Team members retrieved successfully.
+                  user:
+                    type: object
+                    description: User object with team details.
+                    properties:
+                      id:
+                        type: integer
+                        description: ID of the user.
+                        example: 123
+                      email:
+                        type: string
+                        description: Email address of the user.
+                        example: johndoe@example.com
+                      teamList:
+                        type: array
+                        description: List of active team members.
+                        items:
+                          type: object
+                          properties:
+                            username:
+                              type: string
+                              description: Username of the team member.
+                              example: johndoe1
+                           
+                      pendingInviteList:
+                        type: array
+                        description: List of users with pending invitations.
+                        items:
+                          type: object
+                          properties:
+                            username:
+                              type: string
+                              description: Username of the user with pending invitation.
+                              example: johndoe2
+        '400':
+          description: Bad request. Invalid parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: ERROR
+                  message:
+                    type: string
+                    description: Description of the error.
+                    example: Invalid organization name.
+  /user/mfaCode:
+    post:
+      tags:
+        - User
+      summary: Generate Google MFA QR Code
+      description: Generates a Google Multi-Factor Authentication (MFA) QR code for a user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: Username of the user.
+                  example: johndoe
+                password:
+                  type: string
+                  description: Password of the user.
+                  example: mypassword
+      responses:
+        '200':
+          description: Google MFA QR code generated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: SUCCESS
+                  message:
+                    type: string
+                    description: Description of the result.
+                    example: Google MFA QR code created successfully.
+                  qrCode:
+                    type: string
+                    format: byte
+                    description: Byte representation of the QR code image.
+        '400':
+          description: Bad request. Invalid parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: ERROR
+                  message:
+                    type: string
+                    description: Description of the error.
+                    example: Username or password is missing.
+  /user/authenticateMfa:
+    post:
+      tags:
+        - User
+      summary: Authenticate Google MFA Token
+      description: Authenticates the provided Google MFA token for a user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: Username of the user.
+                  example: johndoe
+                token:
+                  type: string
+                  description: Google MFA token.
+                  example: 123456
+      responses:
+        '200':
+          description: Google MFA token authenticated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: SUCCESS
+                  message:
+                    type: string
+                    description: Description of the result.
+                    example: Google MFA token authenticated.
+                  isAuthenticated:
+                    type: boolean
+                    description: Indicates if the token authentication succeeded.
+                    example: true
+        '400':
+          description: Bad request. Invalid parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: ERROR
+                  message:
+                    type: string
+                    description: Description of the error.
+                    example: Username or token is missing.
+                    
+  /user/disableMfaByToken:
+    post:
+      tags:
+        - User
+      summary: Disable Google MFA by Token
+      description: Disables Google MFA for a user using a provided token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: Username of the user.
+                token:
+                  type: string
+                  description: MFA token for authentication.
+      responses:
+        '200':
+          description: Google MFA disabled successfully.
+        '400':
+          description: Bad request. Invalid parameters or authentication failed.
+  /user/disableMfa:
+    post:
+      tags:
+        - User
+      summary: Disable Google MFA
+      description: Disables Google MFA for a user using password authentication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: Username of the user.
+                password:
+                  type: string
+                  description: Password of the user.
+      responses:
+        '200':
+          description: Google MFA disabled successfully.
+        '400':
+          description: Bad request. Invalid parameters or authentication failed.
+  /user/reset-password-by-otp:
+    post:
+      tags:
+        - User
+      summary: Reset Password by OTP
+      description: Resets user password using a one-time password (OTP).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: Username of the user.
+                token:
+                  type: string
+                  description: One-time password (OTP) for verification.
+                newPassword:
+                  type: string
+                  description: New password to set.
+      responses:
+        '200':
+          description: Password reset successfully.
+        '400':
+          description: Bad request. Invalid parameters or authentication failed.
+  /user/reset-password:
+    post:
+      tags:
+        - User
+      summary: Reset Password
+      description: Resets user password using current password for authentication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: Username of the user.
+                oldPassword:
+                  type: string
+                  description: Current password for authentication.
+                newPassword:
+                  type: string
+                  description: New password to set.
+      responses:
+        '200':
+          description: Password reset successfully.
+        '400':
+          description: Bad request. Invalid parameters or authentication failed.
+  /user/reset-password-by-admin:
+    post:
+      tags:
+        - User
+      summary: Reset Password by Admin
+      description: Resets user password by admin user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: Username of the user.
+                ownerId:
+                  type: integer
+                  description: ID of the admin user resetting the password.
+                newPassword:
+                  type: string
+                  description: New password to set.
+      responses:
+        '200':
+          description: Password reset successfully.
+        '400':
+          description: Bad request. Invalid parameters or authentication failed.
+          
+  /user/get-user-hierarchy:
+    get:
+      tags:
+        - User
+      summary: Get User Hierarchy
+      description: Retrieves user hierarchy information based on the provided username.
+      parameters:
+        - name: userName
+          in: query
+          description: Username of the user.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User hierarchy retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request. Invalid parameters or user not found.
+          
+  /user/get-pending-user-requests:
+    get:
+      tags:
+        - User
+      summary: Get Pending User Requests
+      description: Retrieves all users who are waiting to get approved.
+      parameters:
+        - name: organizationId
+          in: query
+          description: ID of the organization.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pending user requests retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  organizationId:
+                    type: integer
+                    description: ID of the organization.
+                  pendingUsers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                    description: List of pending users.
+        '400':
+          description: Bad request. Organization ID not provided.
+
+  /user/get-pending-user-request-count:
+    get:
+      tags:
+        - User
+      summary: Get Pending User Request Count
+      description: Retrieves the total number of users who are waiting to get approved.
+      parameters:
+        - name: organizationId
+          in: query
+          description: ID of the organization.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pending user request count retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  organizationId:
+                    type: integer
+                    description: ID of the organization.
+                  pendingUsersCount:
+                    type: integer
+                    description: Total count of pending users.
+        '400':
+          description: Bad request. Organization ID not provided.
+
+  /user/pending-user-request-action:
+    post:
+      tags:
+        - User
+      summary: Update Pending User Request
+      description: Approves or rejects a user request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: Username of the user.
+                ownerId:
+                  type: integer
+                  description: ID of the owner.
+                status:
+                  type: string
+                  enum: [APPROVE, DENY]
+                  description: Status of the user request.
+                comments:
+                  type: string
+                  description: Additional comments (optional).
+      responses:
+        '200':
+          description: User request updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Confirmation message.
+        '400':
+          description: Bad request. Invalid parameters provided.
+
+  /user/get-confirmed-user-requests:
+    get:
+      tags:
+        - User
+      summary: Get Confirmed User Requests
+      description: Retrieves all users whose requests have been accepted.
+      parameters:
+        - name: organizationId
+          in: query
+          description: ID of the organization.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Confirmed user requests retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  organizationId:
+                    type: integer
+                    description: ID of the organization.
+                  confirmedUsers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                    description: List of confirmed users.
+        '400':
+          description: Bad request. Organization ID not provided.
+
+  /user/get-user-password:
+    get:
+      tags:
+        - User
+      summary: Get User Password
+      description: Retrieves the password of a user.
+      parameters:
+        - name: userName
+          in: query
+          description: Username of the user.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User password retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: string
+                    description: Username of the user.
+                  isActive:
+                    type: string
+                    description: Indicates if the user is active.
+                  password:
+                    type: string
+                    description: Decrypted password of the user.
+        '400':
+          description: Bad request. Username not provided.         
+components:
+  schemas:
+    Organization:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+        fax:
+          type: string
+        dateOfEstablishment:
+          type: string
+          format: date-time
+        status:
+          type: string
+        cmdbOrgId:
+          type: integer
+          format: int64
+        fileName:
+          type: string
+        fileStorageLocationType:
+          type: string
+        profileImage:
+          type: string
+
+
+    Policy:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: integer
+          format: int64
+        status:
+          type: string
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyAssignedPermissions'
+        organization:
+          $ref: '#/components/schemas/Organization'
+    
+
+    PolicyAssignedPermissions:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        policyId:
+          type: integer
+          format: int64
+        policyName:
+          type: string
+        permissionCategoryId:
+          type: integer
+          format: int64
+        permissionCategoryName:
+          type: string
+        permissionId:
+          type: integer
+          format: int64
+        permissionName:
+          type: string
+            
+    Config:
+      properties:
+        id:
+          type: integer
+          format: int64
+        key:
+          type: string
+         
+        value:
+          type: string
+        
+        status:
+          type: string
+         
+        isEncrypted:
+          type: boolean
+         
+        organization:
+          $ref: '#/components/schemas/Organization'
+    Role:
+      properties:
+        name:
+          type: string
+        version:
+          type: integer
+        grp:
+          type: boolean
+        isDefault:
+          type: boolean
+        organization:
+          $ref: "#/components/schemas/Organization"
+        description:
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+        policies:
+          type: array
+          items:
+            $ref: "#/components/schemas/Policy"
+        users:
+          type: array
+          items:
+            type: object
+        disAllowedPermissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+        allowedPermissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+            
+    Permission:
+      properties:
+        id:
+          type: integer    
+        version:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        organization:
+          type: object
+          $ref: "#/components/schemas/Organization"
+    EmailQueue:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        status:
+          type: string
+          nullable: true
+         
+        mailType:
+          type: string
+          nullable: true
+         
+        mailFrom:
+          type: string
+          nullable: true
+        mailTo:
+          type: string
+          nullable: true
+        mailSubject:
+          type: string
+          nullable: true
+        mailBody:
+          type: string
+          nullable: true
+        mailTemplate:
+          type: string
+          nullable: true
+        userName:
+          type: string
+          nullable: true
+          description: Name of the user associated with the email.
+        organization:
+          $ref: '#/components/schemas/Organization'
+          
+    PermissionCategory:
+     type: object
+     properties:
+        id:
+         type: integer
+         format: int64
+        name:
+         type: string
+        description:
+         type: string
+        version:
+         type: integer
+         format: int64
+        status:
+         type: string
+        organization:
+         $ref: '#/components/schemas/Organization'
+        permissions:
+         type: array
+         items:
+          $ref: '#/components/schemas/Permission'
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        active:
+          type: boolean
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        organization:
+          $ref: '#/components/schemas/Organization'
+        owner:
+          $ref: '#/components/schemas/User'
+        googleMfaKey:
+          type: string
+        isMfaEnable:
+          type: string
+        mfaQrImageFilePath:
+          type: string
+        inviteStatus:
+          type: string
+        inviteLink:
+          type: string
+        inviteCode:
+          type: string
+        inviteSentOn:
+          type: string
+          format: date-time
+        tempPassword:
+          type: string
+        encPassword:
+          type: string
+        loginCount:
+          type: integer
+        lastLoginAt:
+          type: string
+          format: date-time
+        mfaQrCode:
+          type: string
+          format: byte
+        pendingInviteList:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        teamList:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        profileImage:
+          type: string
+          format: byte
+        isAuthenticatedByUserName:
+          type: boolean
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        fileName:
+          type: string
+        fileStorageLocationType:
+          type: string
+        status:
+          type: string
+        requestType:
+          type: string
+        comments:
+          type: string      
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        rememberMe:
+          type: boolean
+        redirectTo:
+          type: string  
+    UsernamePasswordToken:
+      type: object
+      properties:
+        username:
+         type: string
+        password:
+         type: string
+        rememberMe:
+         type: boolean
+        host:
+         type: string
+         
